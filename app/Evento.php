@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Auth;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -11,7 +13,6 @@ class Evento extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'titulo',
         'descricao',
         'data',
@@ -24,5 +25,11 @@ class Evento extends Model
 
     function pessoas(){
       return $this->belongsToMany('App\Pessoa');
+    }
+
+    public static function proximos($num = 10){
+        $evento = Evento::where('user_id', '=', Auth::id())->get();
+
+        return $evento;
     }
 }

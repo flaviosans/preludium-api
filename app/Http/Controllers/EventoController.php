@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Evento;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EventoController extends Controller
@@ -15,7 +15,7 @@ class EventoController extends Controller
      */
     public function index()
     {
-        return response()->json(Evento::where('data', '>', Carbon::now())->orderBy('data')->get());
+        return response()->json(Evento::proximos());
     }
 
     /**
@@ -37,7 +37,6 @@ class EventoController extends Controller
     public function store(Request $request)
     {
         $evento = new Evento;
-        $evento->user_id = 1;
         $evento->fill($request->all());
         $evento->save();
         return response()->json($evento);
