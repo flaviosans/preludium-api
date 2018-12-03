@@ -13,9 +13,9 @@ class EventoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Evento::proximos());
+        return response()->json(Evento::eventos(10, $request->mes, $request->tempo, $request->q));
     }
 
     /**
