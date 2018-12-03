@@ -11,8 +11,8 @@
 |
 */
 
-Auth::routes();
 
-Route::get('/', function () {
+Route::get('/{var1?}', function () {
     return view('angular');
 })->middleware('CORS')->name('angular');
+// Auth::routes();
