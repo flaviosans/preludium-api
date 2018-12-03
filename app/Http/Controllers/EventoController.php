@@ -15,7 +15,7 @@ class EventoController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json(Evento::eventos(10, $request->mes, $request->tempo, $request->q));
+        return response()->json(Evento::eventos(10, $request->tempo, $request->q));
     }
 
     /**

@@ -27,48 +27,41 @@ class Evento extends Model
       return $this->belongsToMany('App\Pessoa');
     }
 
-    public static function proximos($num = 100, $mes = 0, $q = ''){
+    public static function eventos($num = 10, $tempo, $q = ''){
+        $eventos = '';
+        if($tempo == 'anteriores')
+            $eventos = self::anteriores($num, $q);
+        else
+            $eventos = self::proximos($num, $q);
+        return $eventos->get();
+    }
+
+    private static function anteriores($num = 100, $q = ''){
+        $evento = Evento::where([
+            ['user_id', '=', Auth::id()],
+            ['data', '<', new Carbon('today')],
+        ]);
+        $evento = self::refinar($evento, $q);
+        $evento = $evento->orderBy('data');
+
+        return $evento;
+    }
+
+    private static function proximos($num = 100, $q = ''){
         $evento = Evento::where([
             ['user_id', '=', Auth::id()],
             ['data', '>', new Carbon('yesterday')],
-            ['data', '<', new Carbon('next year')],
         ]);
-        if($mes > 0 && $mes < 13){
-            $evento = $evento->whereMonth('data', $mes);
-        }
         $evento = self::refinar($evento, $q);
-        $evento = $evento->orderBy('data')->take($num)->get();
+        $evento = $evento->orderBy('data');
 
         return $evento;
-    }
-
-    public static function anteriores($num = 100, $mes = 0, $q = ''){
-        $evento = Evento::where([
-            ['user_id', '=', Auth::id()],
-            ['data', '<', new Carbon('tomorrow')],
-            ['data', '>', new Carbon(('last year'))],
-
-        ]);
-        if($mes > 0 && $mes < 13){
-            $evento = $evento->whereMonth('data', $mes);
-        }
-        $evento = self::refinar($evento, $q);
-        $evento = $evento->orderBy('data')->take($num)->get();
-
-        return $evento;
-    }
-
-    public static function eventos($num = 10, $mes = 0, $tempo, $q = ''){
-        if($tempo == 'anteriores')
-            return self::anteriores($num, $mes, $q);
-        else
-            return self::proximos($num, $mes, $q);
     }
 
     private static function refinar($evento, $q){
         $q = '%' . $q . '%';
-        return $evento->where('titulo', 'like', $q)
-            ->orWhere('descricao', 'like', $q)
-            ->orWhere('data', 'like', $q);
+        return $evento->where('titulo', 'like', $q);
+            // ->orWhere('descricao', 'like', $q)
+            // ->orWhere('data', 'like', $q);
     }
 }
